@@ -39,6 +39,7 @@ jobs:
 
   # ૩. Allure Report બનાવો અને GitHub Pages પર પબ્લિશ કરો
   build_and_publish_report:
+    if: always()
     needs: playwright_tests
     runs-on: ubuntu-latest
     permissions:
