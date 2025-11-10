@@ -65,7 +65,7 @@ jobs:
 
       # ૪. રિપોર્ટ લિંક મેળવવા માટે
       - name: 🚀 Deploy to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v4 # આ action gh-pages બ્રાન્ચ પર રિપોર્ટ મૂકશે
+        uses: peaceiris/actions-gh-pages@v3 # આ action gh-pages બ્રાન્ચ પર રિપોર્ટ મૂકશે
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: allure-report # Allure Report નું આઉટપુટ ફોલ્ડર
