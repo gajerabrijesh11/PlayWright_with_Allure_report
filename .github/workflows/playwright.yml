@@ -54,20 +54,24 @@ jobs:
         with:
           name: allure-results
           path: allure-results
+        if: always()
 
       - name: 🟢 Set up Node.js for CLI
         uses: actions/setup-node@v4
         with:
           node-version: 20
+        if: always()
 
       # 💥 નવું પગલું: Allure Commandline ટૂલ ઇન્સ્ટોલ કરો
       - name: 📦 Install Allure CLI
         # આ Allure CLI ને ગ્લોબલી ઇન્સ્ટોલ કરશે
         run: npm install -g allure-commandline --save-dev
+        if: always()
 
       # 💥 નવું પગલું: Allure Report જનરેટ કરો
       - name: 📝 Generate Allure Report using CLI
         run: allure generate allure-results --clean -o allure-report
+        if: always()
 
       # ૪. રિપોર્ટ લિંક મેળવવા માટે
       - name: 🚀 Deploy using Git CLI
@@ -77,11 +81,14 @@ jobs:
           # 'allure-report' ફોલ્ડરને એક નવા કમિટ સાથે gh-pages બ્રાન્ચમાં પુશ કરો
           git add allure-report
           git commit -m "Deploy Allure Report to GitHub Pages"
+        
           
           # Forcefully પુશ કરો
           git push -f https://${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git HEAD:gh-pages
+        if: always()
 
       - name: ✨ Get Allure Report URL (One-Click Link)
         run: |
           REPORT_URL="https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/allure-report/"
           echo "Allure Report is available at: $REPORT_URL"
+        if: always()
