@@ -70,13 +70,16 @@ jobs:
         run: allure generate allure-results --clean -o allure-report
 
       # ૪. રિપોર્ટ લિંક મેળવવા માટે
-      - name: 🚀 Deploy to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v3.0.0 # આ action gh-pages બ્રાન્ચ પર રિપોર્ટ મૂકશે
-        with:
-          github_token: ${{ secrets.GITHUB_TOKEN }}
-          publish_dir: allure-report # Allure Report નું આઉટપુટ ફોલ્ડર
-          publish_branch: gh-pages
-          force_orphan: true
+      - name: 🚀 Deploy using Git CLI
+        run: |
+          git config user.name "GitHub Actions Bot"
+          git config user.email "<>"
+          # 'allure-report' ફોલ્ડરને એક નવા કમિટ સાથે gh-pages બ્રાન્ચમાં પુશ કરો
+          git add allure-report
+          git commit -m "Deploy Allure Report to GitHub Pages"
+          
+          # Forcefully પુશ કરો
+          git push -f https://${{ secrets.GITHUB_TOKEN }}@github.com/${{ github.repository }}.git HEAD:gh-pages
 
       - name: ✨ Get Allure Report URL (One-Click Link)
         run: |
