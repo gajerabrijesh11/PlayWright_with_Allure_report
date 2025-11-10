@@ -54,7 +54,7 @@ jobs:
         with:
           name: allure-results
           path: allure-results
-          
+
       - name: 🟢 Set up Node.js for CLI
         uses: actions/setup-node@v4
         with:
@@ -76,6 +76,7 @@ jobs:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: allure-report # Allure Report નું આઉટપુટ ફોલ્ડર
           publish_branch: gh-pages
+          force_orphan: true
 
       - name: ✨ Get Allure Report URL (One-Click Link)
         run: |
