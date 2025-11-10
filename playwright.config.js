@@ -24,8 +24,8 @@ export default defineConfig({
   workers: process.env.CI ? 1 : undefined,
   /* Reporter to use. See https://playwright.dev/docs/test-reporters */
   reporter: [
-    ['list'], // કન્સોલમાં આઉટપુટ જોવા માટે
-    ['allure-playwright', { outputFolder: 'allure-results' }] // Allure રિઝલ્ટ અહીં જનરેટ થશે
+    ['list'],
+    ['allure-playwright', { outputFolder: 'allure-results' }]
   ],
   /* Shared settings for all the projects below. See https://playwright.dev/docs/api/class-testoptions. */
   use: {
