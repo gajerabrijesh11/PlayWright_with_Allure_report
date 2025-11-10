@@ -1,27 +1,73 @@
-name: Playwright Tests
+name: Playwright Tests with Allure Report
+
 on:
   push:
-    branches: [ main, master ]
-  pull_request:
-    branches: [ main, master ]
+    branches: [ main ] # તમારી મુખ્ય બ્રાન્ચનું નામ
+
 jobs:
-  test:
-    timeout-minutes: 60
+  playwright_tests:
     runs-on: ubuntu-latest
     steps:
-    - uses: actions/checkout@v4
-    - uses: actions/setup-node@v4
-      with:
-        node-version: lts/*
-    - name: Install dependencies
-      run: npm ci
-    - name: Install Playwright Browsers
-      run: npx playwright install --with-deps
-    - name: Run Playwright tests
-      run: npx playwright test
-    - uses: actions/upload-artifact@v4
-      if: ${{ !cancelled() }}
-      with:
-        name: playwright-report
-        path: playwright-report/
-        retention-days: 30
+      - name: ⬇️ Checkout repository code
+        uses: actions/checkout@v4
+
+      # ૧. Node.js અને Playwright બાઈનરીઝ સેટઅપ કરો
+      - name: 🟢 Set up Node.js
+        uses: actions/setup-node@v4
+        with:
+          node-version: 20 # તમારા પ્રોજેક્ટ મુજબ વર્ઝન બદલી શકો છો
+
+      - name: 📦 Install dependencies
+        run: npm install
+
+      - name: ⚙️ Install Playwright browsers
+        run: npx playwright install --with-deps
+
+      # ૨. Playwright Tests ને Allure સાથે રન કરો
+      - name: 🏃 Run Playwright tests and generate Allure results
+        # ખાતરી કરો કે તમારા package.json માં 'allure-playwright' ઇન્સ્ટોલ થયેલું છે
+        # અને 'playwright.config.ts' માં Allure રિપોર્ટર સેટ કરેલ છે.
+        # Playwright CLI માં Allure રિપોર્ટર સેટ હોય તો આ કમાન્ડ ચાલશે.
+        run: npx playwright test --reporter=line,allure
+
+      - name: 💾 Upload Allure results as artifact
+        uses: actions/upload-artifact@v4
+        with:
+          name: allure-results
+          path: allure-results # Playwright દ્વારા જનરેટ થયેલી ડિરેક્ટરી
+          retention-days: 5
+
+  # ૩. Allure Report બનાવો અને GitHub Pages પર પબ્લિશ કરો
+  build_and_publish_report:
+    needs: playwright_tests
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write
+      pages: write
+      id-token: write
+    steps:
+      - name: ⬇️ Checkout code
+        uses: actions/checkout@v4
+
+      - name: 📥 Download Allure results
+        uses: actions/download-artifact@v4
+        with:
+          name: allure-results
+          path: allure-results
+
+      - name: 📝 Generate Allure Report and Publish to GitHub Pages
+        # આ એક્શન ઓટોમેટીક રિપોર્ટ જનરેટ કરીને gh-pages બ્રાન્ચ પર મૂકી દેશે
+        uses: simple-elf/allure-report-action@v1.7
+        if: always() # ભલે ટેસ્ટ ફેલ થાય, રિપોર્ટ તો બનાવવો જ છે
+        with:
+          allure_results: allure-results
+          gh_pages: gh-pages
+          allure_report: allure-report
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+
+      # ૪. રિપોર્ટ લિંક મેળવવા માટે
+      - name: ✨ Get Allure Report URL (One-Click Link)
+        run: |
+          REPORT_URL="https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/allure-report/"
+          echo "Allure Report is available at: $REPORT_URL"
+          echo "REPORT_URL=$REPORT_URL" >> $GITHUB_ENV # Enviroment variable માં સેવ કરો
