@@ -36,6 +36,7 @@ jobs:
           name: allure-results
           path: allure-results # Playwright દ્વારા જનરેટ થયેલી ડિરેક્ટરી
           retention-days: 5
+        if: always()
 
   # ૩. Allure Report બનાવો અને GitHub Pages પર પબ્લિશ કરો
   build_and_publish_report:
