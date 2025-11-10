@@ -54,18 +54,24 @@ jobs:
         with:
           name: allure-results
           path: allure-results
-
-      - name: 📝 Generate Allure Report and Publish to GitHub Pages
-        # આ એક્શન ઓટોમેટીક રિપોર્ટ જનરેટ કરીને gh-pages બ્રાન્ચ પર મૂકી દેશે
-        uses: treosh/allure-commandline@v3.2.1
+          
+      - name: 🟢 Set up Node.js for CLI
+        uses: actions/setup-node@v4
         with:
-          report_history: true # પાછળના રિપોર્ટ્સનો ડેટા રાખવા માટે
-          allure_results: allure-results
-          allure_report: allure-report
+          node-version: 20
+
+      # 💥 નવું પગલું: Allure Commandline ટૂલ ઇન્સ્ટોલ કરો
+      - name: 📦 Install Allure CLI
+        # આ Allure CLI ને ગ્લોબલી ઇન્સ્ટોલ કરશે
+        run: npm install -g allure-commandline --save-dev
+
+      # 💥 નવું પગલું: Allure Report જનરેટ કરો
+      - name: 📝 Generate Allure Report using CLI
+        run: allure generate allure-results --clean -o allure-report
 
       # ૪. રિપોર્ટ લિંક મેળવવા માટે
       - name: 🚀 Deploy to GitHub Pages
-        uses: peaceiris/actions-gh-pages@v3 # આ action gh-pages બ્રાન્ચ પર રિપોર્ટ મૂકશે
+        uses: peaceiris/actions-gh-pages@v3.0.0 # આ action gh-pages બ્રાન્ચ પર રિપોર્ટ મૂકશે
         with:
           github_token: ${{ secrets.GITHUB_TOKEN }}
           publish_dir: allure-report # Allure Report નું આઉટપુટ ફોલ્ડર
