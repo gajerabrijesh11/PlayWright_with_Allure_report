@@ -28,7 +28,7 @@ jobs:
         # ખાતરી કરો કે તમારા package.json માં 'allure-playwright' ઇન્સ્ટોલ થયેલું છે
         # અને 'playwright.config.ts' માં Allure રિપોર્ટર સેટ કરેલ છે.
         # Playwright CLI માં Allure રિપોર્ટર સેટ હોય તો આ કમાન્ડ ચાલશે.
-        run: npx playwright test --reporter=line,allure
+        run: npx playwright test
 
       - name: 💾 Upload Allure results as artifact
         uses: actions/upload-artifact@v4
