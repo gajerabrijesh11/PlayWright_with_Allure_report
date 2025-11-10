@@ -57,18 +57,21 @@ jobs:
 
       - name: 📝 Generate Allure Report and Publish to GitHub Pages
         # આ એક્શન ઓટોમેટીક રિપોર્ટ જનરેટ કરીને gh-pages બ્રાન્ચ પર મૂકી દેશે
-        uses: simple-elf/allure-report-action@v1.7
-        if: always() # ભલે ટેસ્ટ ફેલ થાય, રિપોર્ટ તો બનાવવો જ છે
+        uses: treosh/allure-commandline@v3.2.1
         with:
+          report_history: true # પાછળના રિપોર્ટ્સનો ડેટા રાખવા માટે
           allure_results: allure-results
-          gh_pages: gh-pages
           allure_report: allure-report
-        env:
-          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
 
       # ૪. રિપોર્ટ લિંક મેળવવા માટે
+      - name: 🚀 Deploy to GitHub Pages
+        uses: peaceiris/actions-gh-pages@v4 # આ action gh-pages બ્રાન્ચ પર રિપોર્ટ મૂકશે
+        with:
+          github_token: ${{ secrets.GITHUB_TOKEN }}
+          publish_dir: allure-report # Allure Report નું આઉટપુટ ફોલ્ડર
+          publish_branch: gh-pages
+
       - name: ✨ Get Allure Report URL (One-Click Link)
         run: |
           REPORT_URL="https://${{ github.repository_owner }}.github.io/${{ github.event.repository.name }}/allure-report/"
           echo "Allure Report is available at: $REPORT_URL"
-          echo "REPORT_URL=$REPORT_URL" >> $GITHUB_ENV # Enviroment variable માં સેવ કરો
